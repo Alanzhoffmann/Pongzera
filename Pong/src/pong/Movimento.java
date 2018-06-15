@@ -12,17 +12,17 @@ import org.lwjgl.glfw.GLFWKeyCallback;
  *
  * @author Guilherme
  */
-public class Movimento extends GLFWKeyCallback {
+public class Movimento{
     float x;
     float y;
     float velocidade;
 
     public void movimentar(float x, float y) {
-        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+        /*if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
             y += 1;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
             y -= 1;
-        }
+        }*/
     }
 }

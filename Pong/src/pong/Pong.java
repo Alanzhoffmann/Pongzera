@@ -16,6 +16,8 @@ public class Pong {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Campo campo = new Campo();
+        campo.telaCampo();
     }
     
 }
