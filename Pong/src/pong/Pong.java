@@ -5,6 +5,8 @@
  */
 package pong;
 
+import elements.Screen;
+
 /**
  *
  * @author Guilherme
@@ -16,8 +18,10 @@ public class Pong {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Campo campo = new Campo();
-        campo.telaCampo();
+        Screen screen = new Screen();
+        screen.run();
+//        Campo campo = new Campo();
+//        campo.telaCampo();
     }
     
 }
