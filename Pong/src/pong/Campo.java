@@ -18,8 +18,8 @@ import org.lwjgl.glfw.GLFWVidMode;
  */
 public class Campo {
 
-    int altura = 1020;
-    int largura = 860;
+    int altura = 640;
+    int largura = 480;
     float angulo;
     float y1 = 0.0f;
     float y2 = 0.0f;
@@ -44,41 +44,45 @@ public class Campo {
 
         GL.createCapabilities();
 
-
-
         while (!glfwWindowShouldClose(tela)) {
             glfwPollEvents();
 
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if(glfwGetKey(tela, GLFW_KEY_UP) == GLFW_TRUE){
+            if (y1 >= 0.6f) {
+                y1 -= 0.001f;
+            } else if (y1 <= -1.2f) {
                 y1 += 0.001f;
-            }
-            if(glfwGetKey(tela, GLFW_KEY_DOWN) == GLFW_TRUE){
+            } else if (glfwGetKey(tela, GLFW_KEY_UP) == GLFW_TRUE) {
+                y1 += 0.001f;
+            } else if (glfwGetKey(tela, GLFW_KEY_DOWN) == GLFW_TRUE) {
                 y1 -= 0.001f;
             }
-            
-            if(glfwGetKey(tela, GLFW_KEY_W) == GLFW_TRUE){
+
+            if (y2 >= 0.6f) {
+                y2 -= 0.001f;
+            } else if (y2 <= -1.2f) {
                 y2 += 0.001f;
-            }
-            if(glfwGetKey(tela, GLFW_KEY_S) == GLFW_TRUE){
+            } else if (glfwGetKey(tela, GLFW_KEY_W) == GLFW_TRUE) {
+                y2 += 0.001f;
+            } else if (glfwGetKey(tela, GLFW_KEY_S) == GLFW_TRUE) {
                 y2 -= 0.001f;
             }
-            
+
             glBegin(GL_QUADS); //Cria o pad da direita
-            glVertex2f(0.9f, 0.4f+y1);
-            glVertex2f(0.95f, 0.4f+y1);
-            glVertex2f(0.95f, 0.2f+y1);
-            glVertex2f(0.9f, 0.2f+y1);
+            glVertex2f(0.9f, 0.4f + y1);
+            glVertex2f(0.95f, 0.4f + y1);
+            glVertex2f(0.95f, 0.2f + y1);
+            glVertex2f(0.9f, 0.2f + y1);
             glEnd();
-            
+
             glBegin(GL_QUADS); //Cria o pad da esquerda
-            glVertex2f(-0.9f, 0.4f+y2);
-            glVertex2f(-0.95f, 0.4f+y2);
-            glVertex2f(-0.95f, 0.2f+y2);
-            glVertex2f(-0.9f, 0.2f+y2);
+            glVertex2f(-0.9f, 0.4f + y2);
+            glVertex2f(-0.95f, 0.4f + y2);
+            glVertex2f(-0.95f, 0.2f + y2);
+            glVertex2f(-0.9f, 0.2f + y2);
             glEnd();
-            
+
             glBegin(GL_QUADS); //Cria a "bola"
             glVertex2f(-0.02f, 0.03f);
             glVertex2f(0.03f, 0.03f);
@@ -88,7 +92,7 @@ public class Campo {
 
             glfwSwapBuffers(tela); // Melhora a tela com os dois contextos back e front
         }
- 
+
         glfwTerminate();
     }
 }
