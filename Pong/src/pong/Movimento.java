@@ -5,24 +5,35 @@
  */
 package pong;
 
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-import org.lwjgl.glfw.GLFWKeyCallback;
+import elements.PontoCartesiano;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.glfwGetKey;
 
 /**
  *
  * @author Guilherme
  */
-public class Movimento{
-    float x;
-    float y;
+public abstract class Movimento {
+
+    protected PontoCartesiano posicao = new PontoCartesiano(0, 0);
+
     float velocidade;
 
-    public void movimentar(float x, float y) {
-        /*if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            y += 1;
+    long tela;
+
+    protected Movimento(long tela) {
+        this.tela = tela;
+    }
+
+    public void setMovimentoVertical(int teclaCima, int teclaBaixo) {
+        if (glfwGetKey(tela, teclaCima) == GLFW_TRUE) {
+            posicao.addY(velocidade);
+        } else if (glfwGetKey(tela, teclaCima) == GLFW_TRUE) {
+            posicao.addY(-velocidade);
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            y -= 1;
-        }*/
+    }
+
+    public void setMovimentoHorizontal(int tecla) {
+
     }
 }

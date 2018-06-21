@@ -18,8 +18,8 @@ import org.lwjgl.glfw.GLFWVidMode;
  */
 public class Campo {
 
-    int altura = 640;
-    int largura = 480;
+//    int altura = 640;
+//    int largura = 480;
     float angulo;
     float y1 = 0.0f;
     float y2 = 0.0f;
@@ -30,66 +30,51 @@ public class Campo {
         }
 
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        long tela = glfwCreateWindow(altura, largura, "Campo", 0, 0);
+        long monitor = glfwGetPrimaryMonitor();
+        GLFWVidMode videoMode = glfwGetVideoMode(monitor); // Se colocar essa função dentro do quarto campo da glfwCreateWindow vira fullscreen
+
+        long tela = glfwCreateWindow(videoMode.height(), videoMode.width(), "Campo", monitor, 0);
+
         if (tela == 0) {
             throw new IllegalStateException("Falhou ao criar a tela!");
         }
 
-        GLFWVidMode videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor()); // Se colocar essa função dentro do quarto campo da glfwCreateWindow vira fullscreen
-        glfwSetWindowPos(tela, ((videoMode.width() - altura) / 2), ((videoMode.height() - largura) / 2)); // Divisão serve para centralizar a tela
-
+//        glfwSetWindowPos(tela, ((videoMode.width() - altura) / 2), ((videoMode.height() - largura) / 2)); // Divisão serve para centralizar a tela;
         glfwShowWindow(tela);
 
         glfwMakeContextCurrent(tela); //Cria um contexto para a função createCapabilities
 
         GL.createCapabilities();
 
+        Bola bola = new Bola(tela);
+        bola.setPosicao(0, 0);
+        bola.setTamanho(0.05f, 0.05f);
+        
+        
+
         while (!glfwWindowShouldClose(tela)) {
             glfwPollEvents();
 
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (y1 >= 0.6f) {
-                y1 -= 0.001f;
-            } else if (y1 <= -1.2f) {
-                y1 += 0.001f;
-            } else if (glfwGetKey(tela, GLFW_KEY_UP) == GLFW_TRUE) {
-                y1 += 0.001f;
-            } else if (glfwGetKey(tela, GLFW_KEY_DOWN) == GLFW_TRUE) {
-                y1 -= 0.001f;
-            }
+//            glBegin(GL_QUADS); //Cria o pad da direita
+//            glVertex2f(0.9f, 0.4f + y1);
+//            glVertex2f(0.95f, 0.4f + y1);
+//            glVertex2f(0.95f, 0.2f + y1);
+//            glVertex2f(0.9f, 0.2f + y1);
+//            glEnd();
+//
+//            glBegin(GL_QUADS); //Cria o pad da esquerda
+//            glVertex2f(-0.9f, 0.4f + y2);
+//            glVertex2f(-0.95f, 0.4f + y2);
+//            glVertex2f(-0.95f, 0.2f + y2);
+//            glVertex2f(-0.9f, 0.2f + y2);
+//            glEnd();
 
-            if (y2 >= 0.6f) {
-                y2 -= 0.001f;
-            } else if (y2 <= -1.2f) {
-                y2 += 0.001f;
-            } else if (glfwGetKey(tela, GLFW_KEY_W) == GLFW_TRUE) {
-                y2 += 0.001f;
-            } else if (glfwGetKey(tela, GLFW_KEY_S) == GLFW_TRUE) {
-                y2 -= 0.001f;
-            }
-
-            glBegin(GL_QUADS); //Cria o pad da direita
-            glVertex2f(0.9f, 0.4f + y1);
-            glVertex2f(0.95f, 0.4f + y1);
-            glVertex2f(0.95f, 0.2f + y1);
-            glVertex2f(0.9f, 0.2f + y1);
-            glEnd();
-
-            glBegin(GL_QUADS); //Cria o pad da esquerda
-            glVertex2f(-0.9f, 0.4f + y2);
-            glVertex2f(-0.95f, 0.4f + y2);
-            glVertex2f(-0.95f, 0.2f + y2);
-            glVertex2f(-0.9f, 0.2f + y2);
-            glEnd();
-
-            glBegin(GL_QUADS); //Cria a "bola"
-            glVertex2f(-0.02f, 0.03f);
-            glVertex2f(0.03f, 0.03f);
-            glVertex2f(0.03f, -0.03f);
-            glVertex2f(-0.02f, -0.03f);
-            glEnd();
-
+            bola.init();
+            
+            bola.setMovimentoVertical(GLFW_KEY_UP, GLFW_KEY_DOWN);
+            
             glfwSwapBuffers(tela); // Melhora a tela com os dois contextos back e front
         }
 
