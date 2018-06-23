@@ -5,7 +5,6 @@
  */
 package elements;
 
-import elements.PontoCartesiano;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.glfwGetKey;
 
@@ -16,8 +15,8 @@ import static org.lwjgl.glfw.GLFW.glfwGetKey;
 public abstract class Movimento {
 
     protected PontoCartesiano posicao = new PontoCartesiano(0, 0);
-    protected PontoCartesiano limitePositivo = new PontoCartesiano(0.8f, 1f);
-    protected PontoCartesiano limiteNegativo = new PontoCartesiano(-0.8f, -1f);
+    protected PontoCartesiano limitePositivo = new PontoCartesiano(1.6f, 1f);
+    protected PontoCartesiano limiteNegativo = new PontoCartesiano(-1.6f, -1f);
     protected PontoCartesiano tamanho = new PontoCartesiano(0, 0);
 
     float velocidade;
@@ -28,13 +27,13 @@ public abstract class Movimento {
         this.tela = tela;
     }
 
-    void movimentarHorizontal(boolean direcao) {
+    protected void movimentarHorizontal(boolean direcao) {
         if (!limiteHorizontal(direcao)) {
             posicao.addX(direcao ? velocidade : -velocidade);
         }
     }
 
-    void movimentarVertical(boolean direcao) {
+    protected void movimentarVertical(boolean direcao) {
         if (!limiteVertical(direcao)) {
             posicao.addY(direcao ? velocidade : -velocidade);
         }
@@ -56,19 +55,50 @@ public abstract class Movimento {
         this.velocidade = velocidade;
     }
 
-    boolean limiteHorizontal(boolean direcao) {
+    protected boolean limiteHorizontal(boolean direcao) {
         if (direcao) {
-            return posicao.getX() + tamanho.getX() / 2 >= limitePositivo.getX();
+            return getPosicaoDireita() >= limitePositivo.getX();
         } else {
-            return posicao.getX() - tamanho.getX() / 2 <= limiteNegativo.getX();
+            return getPosicaoEsquerda() <= limiteNegativo.getX();
         }
     }
 
-    boolean limiteVertical(boolean direcao) {
+    protected boolean limiteVertical(boolean direcao) {
         if (direcao) {
-            return posicao.getY() + tamanho.getY() / 2 >= limitePositivo.getY();
+            return getPosicaoTopo() >= limitePositivo.getY();
         } else {
-            return posicao.getY() - tamanho.getY() / 2 <= limiteNegativo.getY();
+            return getPosicaoBase() <= limiteNegativo.getY();
         }
+    }
+
+    public float getPosicaoTopo() {
+        return posicao.getY() + tamanho.getY() / 2;
+    }
+
+    public float getPosicaoBase() {
+        return posicao.getY() - tamanho.getY() / 2;
+    }
+
+    public float getPosicaoEsquerda() {
+        return posicao.getX() - tamanho.getX() / 2;
+    }
+
+    public float getPosicaoDireita() {
+        return posicao.getX() + tamanho.getX() / 2;
+    }
+
+    public boolean coincidente(Movimento objeto) {
+        return objeto.getPosicaoBase() < getPosicaoTopo()
+                && objeto.getPosicaoTopo() > getPosicaoBase()
+                && objeto.getPosicaoEsquerda() < getPosicaoDireita()
+                && objeto.getPosicaoDireita() > getPosicaoEsquerda();
+    }
+
+    public float getPosicaoX() {
+        return posicao.getX();
+    }
+
+    public float getPosicaoY() {
+        return posicao.getY();
     }
 }

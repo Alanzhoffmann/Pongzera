@@ -18,7 +18,6 @@ public class Box2D extends Movimento {
         super(tela);
     }
 
-
     public final void setPosicao(float x, float y) {
         posicao.setX(x);
         posicao.setY(y);

@@ -16,6 +16,6 @@ public class Pad extends Box2D {
     public Pad(long tela) {
         super(tela);
         setVelocidade(0.05f);
-        setTamanho(0.1f, 0.4f);
+        setTamanho(0.1f, 0.5f);
     }
 }

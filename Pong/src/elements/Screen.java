@@ -5,6 +5,7 @@
  */
 package elements;
 
+import java.util.ArrayList;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -13,6 +14,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import pong.Bola;
 import pong.Pad;
+import pong.Regra;
 
 /**
  *
@@ -57,7 +59,7 @@ public class Screen {
         }
 
         bola = new Bola(tela);
-        bola.setPosicao(0, 0);
+        bola.setPosicaoInicial(0, 0);
 
         padLeft = new Pad(tela);
         padLeft.setPosicao(-1.5f, 0);
@@ -105,7 +107,6 @@ public class Screen {
 //            long thisTime = System.nanoTime();
 //            float elapsed = (lastTime - thisTime) / 1E9f;
 //            lastTime = thisTime;
-
             float aspect = (float) width / height;
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -119,10 +120,20 @@ public class Screen {
 //            glVertex2f(+0.5f, +0.5f);
 //            glVertex2f(-0.5f, +0.5f);
 //            glEnd();
-
             bola.init();
+            bola.quicar();
+
+            ArrayList<Bola> bolas = new ArrayList<>();
+            bolas.add(bola);
+
+            ArrayList<Pad> pads = new ArrayList<>();
+            pads.add(padLeft);
+            pads.add(padRight);
+
             padLeft.init();
             padRight.init();
+
+            Regra.colisao(bolas, pads);
 
             padLeft.setMovimentoVertical(GLFW_KEY_W, GLFW_KEY_S);
             padRight.setMovimentoVertical(GLFW_KEY_UP, GLFW_KEY_DOWN);

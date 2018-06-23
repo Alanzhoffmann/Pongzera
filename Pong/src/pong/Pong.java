@@ -17,8 +17,7 @@ public class Pong {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-        
+
         Screen screen = new Screen();
         screen.run();
     }
