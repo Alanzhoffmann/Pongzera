@@ -8,15 +8,11 @@ package elements;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
 
-import java.nio.*;
-
-import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import pong.Bola;
+import pong.Pad;
 
 /**
  *
@@ -24,32 +20,28 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class Screen {
 
-    // The window handle
-    private long window;
+    long tela;
 
-    public void run() {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+    int width = 800;
+    int height = 480;
 
-        init();
-        loop();
+    GLFWErrorCallback errorCallback;
+    GLFWKeyCallback keyCallback;
+    GLFWFramebufferSizeCallback fsCallback;
 
-        // Free the window callbacks and destroy the window
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
+    final Object lock = new Object();
+    boolean destroyed;
 
-        // Terminate GLFW and free the error callback
-        glfwTerminate();
-        //glfwSetErrorCallback(null).free();
-    }
+    Bola bola;
+    Pad padLeft;
+    Pad padRight;
 
-    private void init() {
-        // Setup an error callback. The default implementation
-        // will print the error message in System.err.
-        GLFWErrorCallback.createPrint(System.err).set();
+    public void init() {
 
-        // Initialize GLFW. Most GLFW functions will not work before doing this.
+        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
+
         if (!glfwInit()) {
-            throw new IllegalStateException("Unable to initialize GLFW");
+            throw new IllegalStateException("Falhou ao iniciar o GLFW");
         }
 
         // Configure GLFW
@@ -57,70 +49,135 @@ public class Screen {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
-        // Create the window
-        window = glfwCreateWindow(640, 640, "Tela 1", NULL, NULL);
-        if (window == NULL) {
-            throw new RuntimeException("Failed to create the GLFW window");
+        long monitor = glfwGetPrimaryMonitor();
+
+        tela = glfwCreateWindow(width, height, "Campo", 0, 0);
+        if (tela == 0) {
+            throw new IllegalStateException("Falhou ao criar a tela!");
         }
 
+        bola = new Bola(tela);
+        bola.setPosicao(0, 0);
+
+        padLeft = new Pad(tela);
+        padLeft.setPosicao(-1.5f, 0);
+
+        padRight = new Pad(tela);
+        padRight.setPosicao(1.5f, 0);
+
+        glfwSetKeyCallback(tela, keyCallback = new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                    glfwSetWindowShouldClose(window, true);
+                }
+            }
+        });
+        glfwSetFramebufferSizeCallback(tela, fsCallback = new GLFWFramebufferSizeCallback() {
+            @Override
+            public void invoke(long window, int w, int h) {
+                if (w > 0 && h > 0) {
+                    width = w;
+                    height = h;
+                }
+            }
+        });
+
+        GLFWVidMode videoMode = glfwGetVideoMode(monitor); // Se colocar essa função dentro do quarto campo da glfwCreateWindow vira fullscreen
+        if (videoMode != null) {
+            glfwSetWindowPos(tela, ((videoMode.width() - width) / 2), ((videoMode.height() - height) / 2)); // Divisão serve para centralizar a tela;
+        }
+        glfwShowWindow(tela);
+    }
+
+    public void renderLoop() {
+        glfwMakeContextCurrent(tela);
+        GL.createCapabilities();
+        glfwSwapInterval(1);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+//        long lastTime = System.nanoTime();
+        while (!destroyed) {
+            glClear(GL_COLOR_BUFFER_BIT);
+            glViewport(0, 0, width, height);
+
+//            long thisTime = System.nanoTime();
+//            float elapsed = (lastTime - thisTime) / 1E9f;
+//            lastTime = thisTime;
+
+            float aspect = (float) width / height;
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-1.0f * aspect, +1.0f * aspect, -1.0f, +1.0f, -1.0f, +1.0f);
+
+//            glMatrixMode(GL_MODELVIEW);
+//            glRotatef(elapsed * 1000.0f, 0, 0, 1);
+//            glBegin(GL_QUADS);
+//            glVertex2f(-0.5f, -0.5f);
+//            glVertex2f(+0.5f, -0.5f);
+//            glVertex2f(+0.5f, +0.5f);
+//            glVertex2f(-0.5f, +0.5f);
+//            glEnd();
+
+            bola.init();
+            padLeft.init();
+            padRight.init();
+
+            padLeft.setMovimentoVertical(GLFW_KEY_W, GLFW_KEY_S);
+            padRight.setMovimentoVertical(GLFW_KEY_UP, GLFW_KEY_DOWN);
+
+            synchronized (lock) {
+                if (!destroyed) {
+                    glfwSwapBuffers(tela);
+                }
+            }
+        }
+    }
+
+    public void create() {
+
+        glfwSetInputMode(tela, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+        glfwSetKeyCallback(tela, (window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
             }
-
         });
-
-        // Get the thread stack and push a new frame
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
-
-            // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight);
-
-            // Get the resolution of the primary monitor
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-            // Center the window
-            glfwSetWindowPos(
-                    window,
-                    (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2
-            );
-        } // the stack frame is popped automatically
-
-        // Make the OpenGL context current
-        glfwMakeContextCurrent(window);
-        // Enable v-sync
-        glfwSwapInterval(1);
-
-        // Make the window visible
-        glfwShowWindow(window);
     }
 
-    private void loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
-        GL.createCapabilities();
-        
-        // Set the clear color
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    void winProcLoop() {
+        /*
+		 * Start new thread to have the OpenGL context current in and which does
+		 * the rendering.
+         */
+        new Thread(() -> {
+            renderLoop();
+        }).start();
 
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while (!glfwWindowShouldClose(window)) {
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            glfwSwapBuffers(window); // swap the color buffers
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
+        while (!glfwWindowShouldClose(tela)) {
+            glfwWaitEvents();
         }
     }
 
+    public void run() {
+        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+
+        try {
+            init();
+            winProcLoop();
+
+            synchronized (lock) {
+                destroyed = true;
+                glfwDestroyWindow(tela);
+            }
+
+            keyCallback.free();
+            fsCallback.free();
+        } finally {
+            glfwTerminate();
+            errorCallback.free();
+        }
+    }
 }

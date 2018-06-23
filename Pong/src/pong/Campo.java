@@ -7,10 +7,13 @@ package pong;
 
 import elements.Box2D;
 import elements.Entity2D;
+import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL11;
 
 /**
  *
@@ -24,6 +27,17 @@ public class Campo {
     float y1 = 0.0f;
     float y2 = 0.0f;
 
+    private static final GLFWFramebufferSizeCallback resizeWindow = new GLFWFramebufferSizeCallback() {
+        @Override
+        public void invoke(long window, int width, int height) {
+            GL11.glViewport(0, 0, width, height);
+            float aspect = (float) width / height;
+            GL11.glLoadIdentity();
+            GL11.glScalef(1.0f / aspect, 1, 1);
+            //update any other window vars you might have (aspect ratio, MVP matrices, etc)
+        }
+    };
+
     public void telaCampo() {
         if (!glfwInit()) {
             throw new IllegalStateException("Falhou ao iniciar o GLFW!");
@@ -33,7 +47,7 @@ public class Campo {
         long monitor = glfwGetPrimaryMonitor();
         GLFWVidMode videoMode = glfwGetVideoMode(monitor); // Se colocar essa função dentro do quarto campo da glfwCreateWindow vira fullscreen
 
-        long tela = glfwCreateWindow(videoMode.height(), videoMode.width(), "Campo", monitor, 0);
+        long tela = glfwCreateWindow(640, 480, "Campo", 0, 0);
 
         if (tela == 0) {
             throw new IllegalStateException("Falhou ao criar a tela!");
@@ -49,8 +63,8 @@ public class Campo {
         Bola bola = new Bola(tela);
         bola.setPosicao(0, 0);
         bola.setTamanho(0.05f, 0.05f);
-        
-        
+
+        GLFW.glfwSetFramebufferSizeCallback(tela, resizeWindow);
 
         while (!glfwWindowShouldClose(tela)) {
             glfwPollEvents();
@@ -70,11 +84,10 @@ public class Campo {
 //            glVertex2f(-0.95f, 0.2f + y2);
 //            glVertex2f(-0.9f, 0.2f + y2);
 //            glEnd();
-
             bola.init();
-            
+
             bola.setMovimentoVertical(GLFW_KEY_UP, GLFW_KEY_DOWN);
-            
+
             glfwSwapBuffers(tela); // Melhora a tela com os dois contextos back e front
         }
 

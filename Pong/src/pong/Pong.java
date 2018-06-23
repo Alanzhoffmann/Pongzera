@@ -5,8 +5,6 @@
  */
 package pong;
 
-import elements.Box2D;
-import elements.Entity2D;
 import elements.Screen;
 
 /**
@@ -19,11 +17,10 @@ public class Pong {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-//        Screen screen = new Screen();
-//        screen.run();
-        Campo campo = new Campo();
-        campo.telaCampo();
+        
+        
+        Screen screen = new Screen();
+        screen.run();
     }
-    
+
 }

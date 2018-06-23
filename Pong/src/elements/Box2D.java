@@ -5,43 +5,43 @@
  */
 package elements;
 
+import java.util.ArrayList;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
  *
  * @author udesc
  */
-public class Box2D extends AbstractEntity2D {
+public class Box2D extends Movimento {
 
-    protected float size;
-
-    public Box2D(float x, float y, float size) {
-        this.x = x;
-        this.y = y;
-        this.size = size;
+    public Box2D(long tela) {
+        super(tela);
     }
 
-    public Box2D() {
-        this.x = this.y = this.size = 0;
+
+    public final void setPosicao(float x, float y) {
+        posicao.setX(x);
+        posicao.setY(y);
     }
 
-    @Override
-    public void setUp() {
-        // We don't need anything here for a box
+    public final void setTamanho(float x, float y) {
+        tamanho.setX(x);
+        tamanho.setY(y);
     }
 
-    @Override
-    public void destroy() {
-        // We don't need anything here for a box
-    }
+    public void init() {
+        glBegin(GL_QUADS); //Cria a "bola"
 
-    @Override
-    public void draw() {
-        glBegin(GL_QUADS);
-        glVertex2f(x + size / 2, y + size / 2);
-        glVertex2f(x + size / 2, y - size / 2);
-        glVertex2f(x - size / 2, y - size / 2);
-        glVertex2f(x - size / 2, y + size / 2);
+        ArrayList<PontoCartesiano> pontos = new ArrayList<>();
+        pontos.add(new PontoCartesiano((posicao.getX() - tamanho.getX() / 2), (posicao.getY() + tamanho.getY() / 2)));
+        pontos.add(new PontoCartesiano((posicao.getX() + tamanho.getX() / 2), (posicao.getY() + tamanho.getY() / 2)));
+        pontos.add(new PontoCartesiano((posicao.getX() + tamanho.getX() / 2), (posicao.getY() - tamanho.getY() / 2)));
+        pontos.add(new PontoCartesiano((posicao.getX() - tamanho.getX() / 2), (posicao.getY() - tamanho.getY() / 2)));
+
+        pontos.forEach((ponto) -> {
+            glVertex2f(ponto.getX(), ponto.getY());
+        });
+
         glEnd();
     }
 }
