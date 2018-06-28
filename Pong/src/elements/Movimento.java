@@ -55,6 +55,10 @@ public abstract class Movimento {
         this.velocidade = velocidade;
     }
 
+    protected final float getVelocidade() {
+        return velocidade;
+    }
+
     protected boolean limiteHorizontal(boolean direcao) {
         if (direcao) {
             return getPosicaoDireita() >= limitePositivo.getX();

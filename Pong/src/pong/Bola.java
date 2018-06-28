@@ -17,10 +17,13 @@ public class Bola extends Box2D {
 
     boolean vertical = limiteVertical(true), horizontal = limiteHorizontal(true);
     PontoCartesiano posicaoInicial = new PontoCartesiano(0, 0);
+    float aceleracao = 0.0005f;
+    float velocidadeInicial = 0.03f;
+    Placar placar = new Placar();
 
     public Bola(long tela) {
         super(tela);
-        setVelocidade(0.05f);
+        setVelocidade(velocidadeInicial);
         setTamanho(0.05f, 0.05f);
     }
 
@@ -35,8 +38,9 @@ public class Bola extends Box2D {
             inverteDirecaoVertical();
         }
         if (limiteHorizontal(horizontal)) {
-//            TODO: placar
+            placar.fezPonto(posicao.getX());
             setPosicao(posicaoInicial.getX(), posicaoInicial.getY());
+            setVelocidade(velocidadeInicial);
         }
         movimentarHorizontal(horizontal);
         movimentarVertical(vertical);
@@ -61,6 +65,9 @@ public class Bola extends Box2D {
         }
 
         return retorno;
+    }
 
+    public void aumentarVelocidade() {
+        setVelocidade(getVelocidade() + aceleracao);
     }
 }

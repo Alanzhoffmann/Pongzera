@@ -5,6 +5,8 @@
  */
 package elements;
 
+import pong.Placar;
+import static elements.renderString.drawString;
 import java.util.ArrayList;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -33,6 +35,8 @@ public class Screen {
 
     final Object lock = new Object();
     boolean destroyed;
+    
+    Placar placar = new Placar();
 
     Bola bola;
     Pad padLeft;
@@ -45,7 +49,7 @@ public class Screen {
         if (!glfwInit()) {
             throw new IllegalStateException("Falhou ao iniciar o GLFW");
         }
-
+        
         // Configure GLFW
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
@@ -98,7 +102,10 @@ public class Screen {
         glfwSwapInterval(1);
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
+        
+        drawString(placar.getPlacarDireita(), 0.1f, 0.3f);
+        drawString(placar.getPlacarEsquerda(), -0.1f, 0.3f);
+        
 //        long lastTime = System.nanoTime();
         while (!destroyed) {
             glClear(GL_COLOR_BUFFER_BIT);

@@ -18,6 +18,7 @@ public class Regra {
             for (Bola bola : bolas) {
                 if (bola.coincidente(pad)) {
                     bola.inverteDirecaoHorizontal();
+                    bola.aumentarVelocidade();
                 }
             }
         }
