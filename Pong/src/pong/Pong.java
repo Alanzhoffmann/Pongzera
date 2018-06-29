@@ -5,7 +5,7 @@
  */
 package pong;
 
-import elements.Screen;
+import elements.Game;
 
 /**
  *
@@ -18,8 +18,8 @@ public class Pong {
      */
     public static void main(String[] args) {
 
-        Screen screen = new Screen();
-        screen.run();
+        Game game = new Game();
+        game.run();
     }
 
 }

@@ -14,34 +14,26 @@ public class Placar {
     int placarDir, placarEsq;
 
     public Placar() {
-        this.placarDir = 0;
-        this.placarEsq = 0;
+        placarDir = 0;
+        placarEsq = 0;
     }
 
     public void aumentarPlacarDireita() {
-        this.placarDir++;
-        System.out.println("Aumentou direita!");
-        
+        placarDir++;
+        System.out.println("Direita: " + placarDir + " Esquerda: " + placarEsq);
+
     }
 
     public void aumentarPlacarEsquerda() {
-        this.placarEsq++;
-        System.out.println("Aumentou esquerda!");
-    }
-    
-    public int getPlacarDireita(){
-        return this.placarDir;
-    }
-    
-    public int getPlacarEsquerda(){
-        return this.placarEsq;
+        placarEsq++;
+        System.out.println("Direita: " + placarDir + " Esquerda: " + placarEsq);
     }
 
-    public void fezPonto(float x) {
-        if (x > 0.3) {
-            aumentarPlacarDireita();
-        } else {
-            aumentarPlacarEsquerda();
-        }
+    public String getPlacarDireita() {
+        return Integer.toString(this.placarDir);
+    }
+
+    public String getPlacarEsquerda() {
+        return Integer.toString(this.placarEsq);
     }
 }

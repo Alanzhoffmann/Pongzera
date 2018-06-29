@@ -47,8 +47,12 @@ public abstract class Movimento {
         }
     }
 
-    public void setMovimentoHorizontal(int tecla) {
-
+    public void setMovimentoHorizontal(int teclaEsquerda, int teclaDireita) {
+        if (glfwGetKey(tela, teclaEsquerda) == GLFW_TRUE) {
+            movimentarHorizontal(false);
+        } else if (glfwGetKey(tela, teclaDireita) == GLFW_TRUE) {
+            movimentarHorizontal(true);
+        }
     }
 
     protected final void setVelocidade(float velocidade) {
@@ -61,41 +65,41 @@ public abstract class Movimento {
 
     protected boolean limiteHorizontal(boolean direcao) {
         if (direcao) {
-            return getPosicaoDireita() >= limitePositivo.getX();
+            return getLimiteDireito() >= limitePositivo.getX();
         } else {
-            return getPosicaoEsquerda() <= limiteNegativo.getX();
+            return getLimiteEsquerdo() <= limiteNegativo.getX();
         }
     }
 
     protected boolean limiteVertical(boolean direcao) {
         if (direcao) {
-            return getPosicaoTopo() >= limitePositivo.getY();
+            return getLimiteTopo() >= limitePositivo.getY();
         } else {
-            return getPosicaoBase() <= limiteNegativo.getY();
+            return getLimiteBase() <= limiteNegativo.getY();
         }
     }
 
-    public float getPosicaoTopo() {
+    public float getLimiteTopo() {
         return posicao.getY() + tamanho.getY() / 2;
     }
 
-    public float getPosicaoBase() {
+    public float getLimiteBase() {
         return posicao.getY() - tamanho.getY() / 2;
     }
 
-    public float getPosicaoEsquerda() {
+    public float getLimiteEsquerdo() {
         return posicao.getX() - tamanho.getX() / 2;
     }
 
-    public float getPosicaoDireita() {
+    public float getLimiteDireito() {
         return posicao.getX() + tamanho.getX() / 2;
     }
 
     public boolean coincidente(Movimento objeto) {
-        return objeto.getPosicaoBase() < getPosicaoTopo()
-                && objeto.getPosicaoTopo() > getPosicaoBase()
-                && objeto.getPosicaoEsquerda() < getPosicaoDireita()
-                && objeto.getPosicaoDireita() > getPosicaoEsquerda();
+        return objeto.getLimiteBase() < getLimiteTopo()
+                && objeto.getLimiteTopo() > getLimiteBase()
+                && objeto.getLimiteEsquerdo() < getLimiteDireito()
+                && objeto.getLimiteDireito() > getLimiteEsquerdo();
     }
 
     public float getPosicaoX() {
@@ -105,4 +109,13 @@ public abstract class Movimento {
     public float getPosicaoY() {
         return posicao.getY();
     }
+
+    public float getTamanhoX() {
+        return tamanho.getX();
+    }
+
+    public float getTamanhoY() {
+        return tamanho.getY();
+    }
+
 }

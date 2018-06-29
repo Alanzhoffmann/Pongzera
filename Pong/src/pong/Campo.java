@@ -5,8 +5,6 @@
  */
 package pong;
 
-import elements.Box2D;
-import elements.Entity2D;
 import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;

@@ -13,25 +13,74 @@ import java.util.ArrayList;
  */
 public class Regra {
 
-    public static void colisao(ArrayList<Bola> bolas, ArrayList<Pad> pads) {
+    private static Regra regra;
+
+    public static Regra getInstance() {
+        if (regra == null) {
+            regra = new Regra();
+        }
+        return regra;
+    }
+
+    private Placar placar = new Placar();
+
+    ArrayList<Bola> bolas;
+    ArrayList<Pad> pads;
+
+    private Regra() {
+
+    }
+
+    public void adicionarBola(Bola bola) {
+        if (bolas == null) {
+            bolas = new ArrayList<>();
+        }
+        bolas.add(bola);
+    }
+
+    public void adicionarPad(Pad pad) {
+        if (pads == null) {
+            pads = new ArrayList<>();
+        }
+        pads.add(pad);
+    }
+
+    public void verificarColisao() {
         for (Pad pad : pads) {
             for (Bola bola : bolas) {
                 if (bola.coincidente(pad)) {
+
+                    if (pad.getPosicaoX() > bola.getPosicaoX()) {
+                        //Pad direito
+                        bola.setPosicao(pad.getLimiteEsquerdo() - bola.getTamanhoX() / 2, bola.getPosicaoY());
+                    } else {
+                        //Pad esquerdo
+                        bola.setPosicao(pad.getLimiteDireito() + bola.getTamanhoX() / 2, bola.getPosicaoY());
+                    }
+
                     bola.inverteDirecaoHorizontal();
                     bola.aumentarVelocidade();
+                    pad.diminuirTamanhoY();
                 }
             }
         }
     }
 
-    public static void colisao(Bola bola, Pad pad1, Pad pad2) {
-        ArrayList<Bola> bolas = new ArrayList<>();
-        bolas.add(bola);
+    public void marcarPonto(float posicao) {
+        if (posicao < 0) {
+            placar.aumentarPlacarDireita();
+        } else {
+            placar.aumentarPlacarEsquerda();
+        }
+        resetarJogo();
+    }
 
-        ArrayList<Pad> pads = new ArrayList<>();
-        pads.add(pad1);
-        pads.add(pad2);
-
-        colisao(bolas, pads);
+    public void resetarJogo() {
+        for (Bola bola : bolas) {
+            bola.resetarBola();
+        }
+        for (Pad pad : pads) {
+            pad.resetarTamanho();
+        }
     }
 }

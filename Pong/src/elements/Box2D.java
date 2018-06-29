@@ -32,7 +32,7 @@ public class Box2D extends Movimento {
         glBegin(GL_QUADS); //Cria a "bola"
 
         ArrayList<PontoCartesiano> pontos = new ArrayList<>();
-        
+
         pontos.add(new PontoCartesiano((posicao.getX() - tamanho.getX() / 2), (posicao.getY() + tamanho.getY() / 2)));
         pontos.add(new PontoCartesiano((posicao.getX() + tamanho.getX() / 2), (posicao.getY() + tamanho.getY() / 2)));
         pontos.add(new PontoCartesiano((posicao.getX() + tamanho.getX() / 2), (posicao.getY() - tamanho.getY() / 2)));

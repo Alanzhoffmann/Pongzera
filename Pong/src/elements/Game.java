@@ -6,7 +6,6 @@
 package elements;
 
 import pong.Placar;
-import static elements.renderString.drawString;
 import java.util.ArrayList;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -22,7 +21,7 @@ import pong.Regra;
  *
  * @author udesc
  */
-public class Screen {
+public class Game {
 
     long tela;
 
@@ -35,13 +34,18 @@ public class Screen {
 
     final Object lock = new Object();
     boolean destroyed;
-    
+
     Placar placar = new Placar();
 
     Bola bola;
     Pad padLeft;
     Pad padRight;
+    Regra regra;
 
+//    PontoCartesiano posicaoPlacarEsquerdo = new PontoCartesiano(-0.2f, 0.5f);
+//    PontoCartesiano posicaoPlacarDireito = new PontoCartesiano(0.2f, 0.5f);
+//
+//    FontRenderer fontRenderer = new FontRenderer();
     public void init() {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
@@ -49,7 +53,7 @@ public class Screen {
         if (!glfwInit()) {
             throw new IllegalStateException("Falhou ao iniciar o GLFW");
         }
-        
+
         // Configure GLFW
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
@@ -70,6 +74,12 @@ public class Screen {
 
         padRight = new Pad(tela);
         padRight.setPosicao(1.5f, 0);
+
+        regra = Regra.getInstance();
+
+        regra.adicionarBola(bola);
+        regra.adicionarPad(padLeft);
+        regra.adicionarPad(padRight);
 
         glfwSetKeyCallback(tela, keyCallback = new GLFWKeyCallback() {
             @Override
@@ -102,45 +112,25 @@ public class Screen {
         glfwSwapInterval(1);
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        
-        drawString(placar.getPlacarDireita(), 0.1f, 0.3f);
-        drawString(placar.getPlacarEsquerda(), -0.1f, 0.3f);
-        
-//        long lastTime = System.nanoTime();
+
         while (!destroyed) {
             glClear(GL_COLOR_BUFFER_BIT);
             glViewport(0, 0, width, height);
 
-//            long thisTime = System.nanoTime();
-//            float elapsed = (lastTime - thisTime) / 1E9f;
-//            lastTime = thisTime;
             float aspect = (float) width / height;
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             glOrtho(-1.0f * aspect, +1.0f * aspect, -1.0f, +1.0f, -1.0f, +1.0f);
 
-//            glMatrixMode(GL_MODELVIEW);
-//            glRotatef(elapsed * 1000.0f, 0, 0, 1);
-//            glBegin(GL_QUADS);
-//            glVertex2f(-0.5f, -0.5f);
-//            glVertex2f(+0.5f, -0.5f);
-//            glVertex2f(+0.5f, +0.5f);
-//            glVertex2f(-0.5f, +0.5f);
-//            glEnd();
             bola.init();
             bola.quicar();
-
-            ArrayList<Bola> bolas = new ArrayList<>();
-            bolas.add(bola);
-
-            ArrayList<Pad> pads = new ArrayList<>();
-            pads.add(padLeft);
-            pads.add(padRight);
 
             padLeft.init();
             padRight.init();
 
-            Regra.colisao(bolas, pads);
+//            fontRenderer.escrever(posicaoPlacarDireito, placar.getPlacarDireita());
+//            fontRenderer.escrever(posicaoPlacarEsquerdo, placar.getPlacarEsquerda());
+            regra.verificarColisao();
 
             padLeft.setMovimentoVertical(GLFW_KEY_W, GLFW_KEY_S);
             padRight.setMovimentoVertical(GLFW_KEY_UP, GLFW_KEY_DOWN);
